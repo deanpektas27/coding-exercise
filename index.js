@@ -34,9 +34,10 @@ const getData = (i) => {
         const list = document.querySelector('.list-view');
         const page = document.querySelector('.page-count');
         const page2 = document.querySelector('.page-count-2');
-        page.innerHTML = `<p>Page ${i} of 116</p>`;
-        page2.innerHTML = `<p>Page ${i} of 116</p>`;
+        page.innerHTML = `<p>Page ${i} of 115</p>`;
+        page2.innerHTML = `<p>Page ${i} of 115</p>`;
         console.log(page)
+
 
         data.forEach((entry) => {
             // Each individual event entry
@@ -53,7 +54,7 @@ const getData = (i) => {
             listContent.classList.add('list-content-html');
 
             const date = document.createElement('p');
-            let dateObject = new Date(entry.date).toISOString().split('T')[0];
+            let dateObject = new Date(entry.start).toISOString().split('T')[0];
             date.innerText = dateObject;
 
             let contentIndex = entry.content.indexOf('</p>');
@@ -82,7 +83,7 @@ nextBtn.onclick = () => {
 
 prevBtn.onclick = () => {
     i -= 1;
-    if(i == 1) i = 117;
+    if(i == 0) i = 115;
     window.scrollTo(0, 0);
     document.querySelector('.list-view').innerHTML = "";
     getData(i);
