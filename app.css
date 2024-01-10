@@ -83,5 +83,7 @@
 #prev-btn, #next-btn {
     margin: 5px;
     padding: 5px;
-    width: 100px;
+    width: 45px;
+    border-radius:50px;
+    background-color:#ffb500;
 }
