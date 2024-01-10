@@ -32,6 +32,11 @@ const getData = (i) => {
         // const data = response.data;
         const {data} = response;
         const list = document.querySelector('.list-view');
+        const page = document.querySelector('.page-count');
+        const page2 = document.querySelector('.page-count-2');
+        page.innerHTML = `<p>Page ${i} of 116</p>`;
+        page2.innerHTML = `<p>Page ${i} of 116</p>`;
+        console.log(page)
 
         data.forEach((entry) => {
             // Each individual event entry
@@ -47,12 +52,17 @@ const getData = (i) => {
             const listContent = document.createElement('div');
             listContent.classList.add('list-content-html');
 
+            const date = document.createElement('p');
+            let dateObject = new Date(entry.date).toISOString().split('T')[0];
+            date.innerText = dateObject;
+
             let contentIndex = entry.content.indexOf('</p>');
             listContent.innerHTML = entry.content == "" ? "<p>No description found.</p>" : entry.content.slice(0,contentIndex) + '....';
             title.innerText = entry.title;
 
             listContentBlock.append(title);
             listContentBlock.append(listContent);
+            listContentBlock.append(date);
             list.append(listContentBlock);
         });   
     })

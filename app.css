@@ -41,6 +41,10 @@
     padding:20px;
 }
 
+.page-count, .page-count-2 {
+    text-align: center;
+}
+
 .body-list {
     width:600px;
     margin: 0 auto;
