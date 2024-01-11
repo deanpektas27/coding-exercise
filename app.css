@@ -1,3 +1,7 @@
+body {
+    min-height: 100vh;
+}
+
 .loading {
     position: relative;
     z-index: 100;
@@ -29,6 +33,10 @@
 }
 
 .header-logo {
+    margin: 0 auto!important;
+}
+
+.header-logo {
     background-color: #ffb500;
     width:250px;
     margin-bottom: 20px;
@@ -46,10 +54,30 @@
 }
 
 .body-list {
-    width:600px;
+    /* width:900px; */
     margin: 0 auto;
     font-family: sans-serif;
 }
+
+#scrollToTopBtn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #ffb500; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+}
+
+#scrollToTopBtn:hover {
+    background-color: #4f2c1d; /* Add a dark-grey background on hover */
+  }
 
 .body-list img {
     margin:10px;
@@ -58,6 +86,28 @@
 .body-list ul {
     list-style-type:none;
     padding-left: 0;
+}
+
+.list-view {
+    display: grid;
+    min-width: 0;
+}
+
+@media screen and (max-width: 800px) {
+    .list-view {
+        grid-auto-rows:auto
+    }
+}
+
+@media screen and (min-width: 801px) {
+    .list-view {
+        grid-template-columns: 
+        1fr 1fr 1fr;
+    }
+}
+
+.list-view img {
+    display: none;
 }
 
 .body-list .list-view .list-content {
@@ -84,10 +134,16 @@
     margin: 0 auto;
 }
 
-#prev-btn, #next-btn, #prev-btn-2, #next-btn-2 {
+#prev-btn, #next-btn {
     margin: 5px;
     padding: 5px;
     width: 45px;
     border-radius:50px;
     background-color:#ffb500;
+    transition: 0.3s;
+}
+
+#prev-btn:hover, #next-btn:hover {
+    cursor: pointer;
+    opacity: 50%;
 }
