@@ -6,9 +6,6 @@ class ContentReaderFromURL {
     i                   = 1;
     TotalPages          = 0;
 
-    FetchData           = false;
-    TypingTimer         = null;
-
     // Elements
     NextBtn             = document.getElementById('next-btn');
     PrevBtn             = document.getElementById('prev-btn');
@@ -16,9 +13,8 @@ class ContentReaderFromURL {
     Page                = document.querySelector('.page-count');
     Page2               = document.querySelector('.page-count-2');
     ScrollToTopBtn      = document.getElementById("scrollToTopBtn");
-
     
-    // methods
+    // Methods
 
     // State Management for URL
     PushState = () => {
@@ -27,7 +23,6 @@ class ContentReaderFromURL {
 
     PopState = () => {
         window.addEventListener('popstate', e => {
-            console.log(e.state)
             if (e.state !== null) {
                 this.i = e.state;
                 this.getData();
@@ -41,10 +36,8 @@ class ContentReaderFromURL {
 
     // Retrieves API data and alters text of unordered list in index.html to include results
     getData = () => {
-        console.log(`${this.BaseURL}${this.URI}${this.i}`)
         document.querySelector('.list-view').innerHTML = "";
         axios.get(`${this.BaseURL}${this.URI}${this.i}`).then(response => {
-            console.log(`GET adelphi data`, response);
 
             // Set values based on API request
             this.TotalPages = Number(response.headers[`x-wp-totalpages`])
@@ -84,10 +77,8 @@ class ContentReaderFromURL {
     
             // Input a custom API request with desired number
             const PageInput = document.querySelector('.page-input');
-            // console.log('pageinput yay', PageInput)
             PageInput.addEventListener('keyup', this.debounce( (e) => {
-                let DesiredPage = Number(e.srcElement.value)
-                console.log(DesiredPage);
+                let DesiredPage = Number(e.srcElement.value);
                 if (DesiredPage <= this.TotalPages && DesiredPage > 0) {
                     this.i = DesiredPage;
                     window.scrollTo(0, 0);
@@ -97,7 +88,6 @@ class ContentReaderFromURL {
                 } else {
                     alert('Invalid Request!');
                     PageInput.value = this.i;
-                    console.log(PageInput.value);
                 }
             }, 800))
         })
