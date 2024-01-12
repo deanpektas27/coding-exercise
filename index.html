@@ -9,7 +9,7 @@
 <body>
 
     <header>
-        <section class="loading">
+        <section class="loading_container">
             <div class="loading__bg">
                 <div class="loading__img-container">
                     <img src="/assets/AU-Mark-FullColor-RGB.png" width="250px" alt="" class="loading__img">
@@ -27,10 +27,15 @@
             <button id="prev-btn"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M20 .755l-14.374 11.245 14.374 11.219-.619.781-15.381-12 15.391-12 .609.755z"/></svg></button>
             <button id="next-btn"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M4 .755l14.374 11.245-14.374 11.219.619.781 15.381-12-15.391-12-.609.755z"/></svg></button>
         </div>
-        <section class="list-view"></section>
+        <div class="content loaded">
+            <section class="list-view"></section>
+            <section class="loader">
+                <img src="https://res.cloudinary.com/bytesizedpieces/image/upload/v1656084931/article/a-how-to-guide-on-making-an-animated-loading-image-for-a-website/animated_loader_gif_n6b5x0.gif">
+            </section>
+        </div>
         <section>
             <p class="page-count-2"></p>
-            <button id="scrollToTopBtn" onclick="ContentReaderFromURL.topFunction()" title="Go to top">Go To Top</button>    
+            <button id="scrollToTopBtn" onclick="render.topFunction()" title="Go to top">Go To Top</button>    
         </section>
     </section>
 

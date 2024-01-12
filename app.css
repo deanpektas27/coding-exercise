@@ -53,6 +53,10 @@ body {
     text-align: center;
 }
 
+.page-input {
+    width: 20px;
+}
+
 .body-list {
     /* width:900px; */
     margin: 0 auto;
@@ -146,4 +150,19 @@ body {
 #prev-btn:hover, #next-btn:hover {
     cursor: pointer;
     opacity: 50%;
+}
+
+.content > * {
+    display: none;
+}
+
+.content.loading .loader {
+    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content.loaded .list-view {
+    display: grid;
 }

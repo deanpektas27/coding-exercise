@@ -1,49 +1,58 @@
+class ContentReaderFromURL {
 
-let ContentReaderFromURL = {
+    // Variables
+    BaseURL             = 'https://www.adelphi.edu/wp-json/wp';
+    URI                 = '/v2/event?page=';
+    i                   = 1;
+    TotalPages          = 0;
 
-    // Variables //
-    BaseURL: 'https://www.adelphi.edu/wp-json/wp',
-    URI: '/v2/event?page=',
-    firstVisit: null,
-    i: 1,
+    FetchData           = false;
+    TypingTimer         = null;
 
-    // Elements //
-    nextBtn: document.getElementById('next-btn'),
-    prevBtn: document.getElementById('prev-btn'),
-    list: document.querySelector('.list-view'),
-    page: document.querySelector('.page-count'),
-    page2: document.querySelector('.page-count-2'),
-    scrollToTopBtn: document.getElementById("scrollToTopBtn"),
+    // Elements
+    NextBtn             = document.getElementById('next-btn');
+    PrevBtn             = document.getElementById('prev-btn');
+    List                = document.querySelector('.list-view');
+    Page                = document.querySelector('.page-count');
+    Page2               = document.querySelector('.page-count-2');
+    ScrollToTopBtn      = document.getElementById("scrollToTopBtn");
 
-    // Reusable methods //
-    // Loading animation functions upon page load to hide the API text from popping in after page loads
-    loadingFade: () => {
-        const loadingBg = document.querySelector('.loading__bg');
-        const loadingImg = document.querySelector('.loading__img');
-        loadingBg.style.opacity = "0";
-        loadingImg.style.opacity = "0";
-    },
+    
+    // methods
 
-    loadingRemove: () => {
-        const loading = document.querySelector('.loading');
-        loading.style.display = "none";
-    },
+    // State Management for URL
+    PushState = () => {
+        history.pushState(this.i, `Page ${this.i}`, `./page=${this.i}` )
+    };
+
+    PopState = () => {
+        window.addEventListener('popstate', e => {
+            console.log(e.state)
+            if (e.state !== null) {
+                this.i = e.state;
+                this.getData();
+            }
+            else {
+                this.i = 1;
+                this.getData();
+            }
+        })
+    }
 
     // Retrieves API data and alters text of unordered list in index.html to include results
-    getData: (BaseURL, URI, i) => {
-        console.log(`${BaseURL}${URI}${i}`)
+    getData = () => {
+        console.log(`${this.BaseURL}${this.URI}${this.i}`)
         document.querySelector('.list-view').innerHTML = "";
-        axios.get(`${BaseURL}${URI}${i}`).then(response => {
+        axios.get(`${this.BaseURL}${this.URI}${this.i}`).then(response => {
             console.log(`GET adelphi data`, response);
             const {data} = response;
-
-            ContentReaderFromURL.page.innerHTML = `<p>Page ${i} of 115</p>`;
-            ContentReaderFromURL.page2.innerHTML = `<p>Page ${i} of 115</p>`;
-    
+            this.TotalPages = Number(response.headers[`x-wp-totalpages`])
+            
+            this.Page.innerHTML = `Page <input class="page-input" value='${this.i}' /> of ${this.TotalPages}`;
+            this.Page2.innerHTML = `Page ${this.i} of ${this.TotalPages}`;
     
             data.forEach((entry) => {
                 const listContentBlock = document.createElement('article');
-                // console.log(entry)
                 listContentBlock.classList.add('list-content');
     
                 // Inner Content of each block
@@ -66,99 +75,110 @@ let ContentReaderFromURL = {
                 listContentBlock.append(title);
                 listContentBlock.append(listContent);
                 listContentBlock.append(date);
-                ContentReaderFromURL.list.append(listContentBlock);
+                this.List.append(listContentBlock);
+                document.querySelector('.content').classList.remove('loading');
+                document.querySelector('.content').classList.add('loaded');
+                // document.querySelector('.content .list-view').style.transition = "300000ms ease-in";
             });   
         })
-        .catch((error) => console.log(error));
-    },
+        .catch((error) => console.log(error));                
+        
+    };
 
-    nextPage: () => {
-        ContentReaderFromURL.i += 1;
-        if(ContentReaderFromURL.i == 116) ContentReaderFromURL.i = 1;
+    paginationLoader() {
+        document.querySelector('.content').classList.remove('loaded');
+        document.querySelector('.content').classList.add('loading');
+    };
+
+    nextPage = () => {
+        this.i += 1;
+        if(this.i > this.TotalPages) this.i = 1;
         window.scrollTo(0, 0);
-        ContentReaderFromURL.getData(ContentReaderFromURL.BaseURL,ContentReaderFromURL.URI,ContentReaderFromURL.i);
-    },
+        this.paginationLoader();
+        this.getData(this.BaseURL,this.URI,this.i);
+    };
     
-    prevPage: () => {
-        ContentReaderFromURL.i -= 1;
-        if(ContentReaderFromURL.i == 0) ContentReaderFromURL.i = 115;
+    prevPage = () => {
+        this.i -= 1;
+        if(this.i < 1) this.i = this.TotalPages;
         window.scrollTo(0, 0);
-        ContentReaderFromURL.getData(ContentReaderFromURL.BaseURL,ContentReaderFromURL.URI,ContentReaderFromURL.i);
-    },
+        this.paginationLoader();
+        this.getData(this.BaseURL,this.URI,this.i);
+    };
 
-    scrollFunction: () => {
+    // Loading animation functions upon page load to hide the API text from popping in after page loads
+    loadingFade = () => {
+        const loadingBg = document.querySelector('.loading__bg');
+        const loadingImg = document.querySelector('.loading__img');
+        loadingBg.style.opacity = "0";
+        loadingImg.style.opacity = "0";
+    };
+
+    loadingRemove = () => {
+        const loading = document.querySelector('.loading_container');
+        loading.style.display = "none";
+    };
+
+    scrollFunction = () => {
         if (document.body.scrollTop > 30 || document.documentElement.scrollTop > 20) {
-            ContentReaderFromURL.scrollToTopBtn.style.display = "block";
+            this.ScrollToTopBtn.style.display = "block";
           } else {
-            ContentReaderFromURL.scrollToTopBtn.style.display = "none";
+            this.ScrollToTopBtn.style.display = "none";
           }
-    },
+    };
 
-    topFunction: () => {
+    topFunction = () => {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
-    },
+    };
 
     // Starts all required functions to fetch info
-    setup: () => {
+    setup = () => {
+        this.getData();
 
-        ContentReaderFromURL.getData(ContentReaderFromURL.BaseURL,ContentReaderFromURL.URI,ContentReaderFromURL.i);
-
-        if (ContentReaderFromURL.firstVisit == null) {
-            window.setInterval(ContentReaderFromURL.loadingFade, 1500);
-            window.setInterval(ContentReaderFromURL.loadingRemove, 3000);
+        if (this.firstVisit == null) {
+            window.setInterval(this.loadingFade, 1500);
+            window.setInterval(this.loadingRemove, 3000);
         } else {
-            ContentReaderFromURL.loadingRemove;
+            this.loadingRemove;
         }
 
-        window.onscroll = function() {ContentReaderFromURL.scrollFunction()}
-        
-        // ContentReaderFromURL.PushState();
-        // ContentReaderFromURL.PopState();
+        window.onscroll = () => {
+            this.scrollFunction();
+        }
 
-        document.onkeydown = (e) => {
+        window.addEventListener('keyup', this.debounce( (e) => {
             console.log(e.key)
             switch (e.key) {
                 case 'ArrowRight':
-                    ContentReaderFromURL.nextPage()
-                    ContentReaderFromURL.PushState()
+                    this.nextPage()
                     break;
                 case 'ArrowLeft':
-                    ContentReaderFromURL.prevPage()
-                    ContentReaderFromURL.PushState()
+                    this.prevPage()
                     break;
             }
-        }
+        }, 800))
 
-        ContentReaderFromURL.nextBtn.onclick = () => {
-            ContentReaderFromURL.nextPage();
-            ContentReaderFromURL.PushState();
-        }
-        ContentReaderFromURL.prevBtn.onclick = () => {
-            ContentReaderFromURL.prevPage();
-            ContentReaderFromURL.PushState();
-        }
-    },
+        this.NextBtn.onclick = this.debounce(() => {
+            this.nextPage();
+            this.PushState();
+        }, 800);
+        this.PrevBtn.onclick = this.debounce(() => {
+            this.prevPage();
+            this.PushState();
+        }, 800);
+    };
 
-    // State Management for URL
-    PushState: () => {
-        history.pushState(ContentReaderFromURL.i, `Page ${ContentReaderFromURL.i}`, `./page=${ContentReaderFromURL.i}` )
-    },
-
-    PopState: () => {
-        window.addEventListener('popstate', e => {
-            console.log(e.state)
-            if (e.state !== null) {
-                ContentReaderFromURL.i = e.state;
-                ContentReaderFromURL.setup();
-            }
-            else {
-                ContentReaderFromURL.i = 1;
-                ContentReaderFromURL.setup();
-            }
-        })
+    debounce = (callback, wait) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { callback.apply(this, args); }, wait);
+        };
     }
 }
 
-ContentReaderFromURL.setup();
+const render = new ContentReaderFromURL()
+render.setup();
+render.PopState();
 
