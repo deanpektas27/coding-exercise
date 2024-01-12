@@ -45,12 +45,14 @@ class ContentReaderFromURL {
         document.querySelector('.list-view').innerHTML = "";
         axios.get(`${this.BaseURL}${this.URI}${this.i}`).then(response => {
             console.log(`GET adelphi data`, response);
-            const {data} = response;
+
+            // Set values based on API request
             this.TotalPages = Number(response.headers[`x-wp-totalpages`])
-            
             this.Page.innerHTML = `Page <input class="page-input" value='${this.i}' /> of ${this.TotalPages}`;
             this.Page2.innerHTML = `Page ${this.i} of ${this.TotalPages}`;
     
+            // Display each object in response
+            const {data} = response;
             data.forEach((entry) => {
                 const listContentBlock = document.createElement('article');
                 listContentBlock.classList.add('list-content');
@@ -78,8 +80,26 @@ class ContentReaderFromURL {
                 this.List.append(listContentBlock);
                 document.querySelector('.content').classList.remove('loading');
                 document.querySelector('.content').classList.add('loaded');
-                // document.querySelector('.content .list-view').style.transition = "300000ms ease-in";
-            });   
+            });
+    
+            // Input a custom API request with desired number
+            const PageInput = document.querySelector('.page-input');
+            // console.log('pageinput yay', PageInput)
+            PageInput.addEventListener('keyup', this.debounce( (e) => {
+                let DesiredPage = Number(e.srcElement.value)
+                console.log(DesiredPage);
+                if (DesiredPage <= this.TotalPages && DesiredPage > 0) {
+                    this.i = DesiredPage;
+                    window.scrollTo(0, 0);
+                    this.paginationLoader();
+                    this.PushState();
+                    this.getData(this.BaseURL,this.URI,this.i);
+                } else {
+                    alert('Invalid Request!');
+                    PageInput.value = this.i;
+                    console.log(PageInput.value);
+                }
+            }, 800))
         })
         .catch((error) => console.log(error));                
         
@@ -95,6 +115,7 @@ class ContentReaderFromURL {
         if(this.i > this.TotalPages) this.i = 1;
         window.scrollTo(0, 0);
         this.paginationLoader();
+        this.PushState();
         this.getData(this.BaseURL,this.URI,this.i);
     };
     
@@ -103,6 +124,7 @@ class ContentReaderFromURL {
         if(this.i < 1) this.i = this.TotalPages;
         window.scrollTo(0, 0);
         this.paginationLoader();
+        this.PushState();
         this.getData(this.BaseURL,this.URI,this.i);
     };
 
@@ -148,10 +170,9 @@ class ContentReaderFromURL {
         }
 
         window.addEventListener('keyup', this.debounce( (e) => {
-            console.log(e.key)
             switch (e.key) {
                 case 'ArrowRight':
-                    this.nextPage()
+                    this.nextPage();
                     break;
                 case 'ArrowLeft':
                     this.prevPage()
@@ -161,12 +182,11 @@ class ContentReaderFromURL {
 
         this.NextBtn.onclick = this.debounce(() => {
             this.nextPage();
-            this.PushState();
         }, 800);
         this.PrevBtn.onclick = this.debounce(() => {
             this.prevPage();
-            this.PushState();
         }, 800);
+
     };
 
     debounce = (callback, wait) => {
