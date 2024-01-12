@@ -113,8 +113,8 @@ let ContentReaderFromURL = {
 
         window.onscroll = function() {ContentReaderFromURL.scrollFunction()}
         
-        ContentReaderFromURL.PushState();
-        ContentReaderFromURL.PopState();
+        // ContentReaderFromURL.PushState();
+        // ContentReaderFromURL.PopState();
 
         document.onkeydown = (e) => {
             console.log(e.key)
