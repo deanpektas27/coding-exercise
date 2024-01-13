@@ -10,4 +10,5 @@
   - Detects left and right arrow key input on desktop keyboard.
   - Input field for custom page request above the arrow buttons.
   - Push/Pop state for every request made which adds the current page number to the current web address, allowing user to return to previous page by clicking the back button on the browser.
+- Browse each event preview in the listview. View the full content of the event by clicking on the title of the event.
 - Scroll to top button that appears once user scrolls down list allowing for quick return to top of list.

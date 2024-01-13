@@ -16,6 +16,7 @@ body {
     background: #fff;
     opacity: 1;
     transition: all 600ms ease-out;
+    z-index: 10000;
 }
 
 .loading__img-container {
@@ -115,11 +116,22 @@ body {
 }
 
 .body-list .list-view .list-content {
-    background-color: #000000;
-    color:#ffb500;
+    border: 1px solid #ccc;
+    color:#555;
     margin:5px;
     padding:20px;
-    font-family:sans-serif
+    font-family:sans-serif;
+    border-radius: 10px;
+    transition: all 0.25s ease-out;
+    box-shadow: inset 2px 2px 2px #eaeaea;
+}
+
+.body-list .list-view .list-content h2 {
+    color:  #333;
+}
+
+.body-list .list-view .list-content:hover {
+    background-color: #f1f1f1 !important;
 }
 
 .content-title {
@@ -128,7 +140,7 @@ body {
 }
 
 .content-title:hover {
-    color: white;
+    color: #bfbfbf!important;
 }
 
 .button-navigation {

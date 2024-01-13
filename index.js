@@ -16,26 +16,15 @@ class ContentReaderFromURL {
     
     // Methods
 
-    // State Management for URL
+    // State Management for URL, takes current i value and places it next to a hashtag in the URL
     PushState = () => {
-        history.pushState(this.i, `Page ${this.i}`, `./page=${this.i}` )
+        window.location.hash = this.i;
     };
-
-    PopState = () => {
-        window.addEventListener('popstate', e => {
-            if (e.state !== null) {
-                this.i = e.state;
-                this.getData();
-            }
-            else {
-                this.i = 1;
-                this.getData();
-            }
-        })
-    }
 
     // Retrieves API data and alters text of unordered list in index.html to include results
     getData = () => {
+        this.paginationLoader();
+        // Clear current list before fetching data from API
         document.querySelector('.list-view').innerHTML = "";
         axios.get(`${this.BaseURL}${this.URI}${this.i}`).then(response => {
 
@@ -75,7 +64,8 @@ class ContentReaderFromURL {
                 document.querySelector('.content').classList.add('loaded');
             });
     
-            // Input a custom API request with desired number
+            // Attach event listener every time page input is created at the beginning of API request, 
+            // allows user to input a desired number for a custom API request
             const PageInput = document.querySelector('.page-input');
             PageInput.addEventListener('keyup', this.debounce( (e) => {
                 let DesiredPage = Number(e.srcElement.value);
@@ -84,41 +74,39 @@ class ContentReaderFromURL {
                     window.scrollTo(0, 0);
                     this.paginationLoader();
                     this.PushState();
-                    this.getData(this.BaseURL,this.URI,this.i);
                 } else {
                     alert('Invalid Request!');
                     PageInput.value = this.i;
                 }
-            }, 800))
+            }, 400))
         })
         .catch((error) => console.log(error));                
         
     };
 
+    // Triggers loading gif to appear by changing class of div that encapsulates the whole list view
     paginationLoader() {
         document.querySelector('.content').classList.remove('loaded');
         document.querySelector('.content').classList.add('loading');
     };
 
     nextPage = () => {
-        this.i += 1;
         if(this.i > this.TotalPages) this.i = 1;
+        else {
+            this.i += 1;
+            this.PushState();
+        }
         window.scrollTo(0, 0);
-        this.paginationLoader();
-        this.PushState();
-        this.getData(this.BaseURL,this.URI,this.i);
     };
     
     prevPage = () => {
         this.i -= 1;
         if(this.i < 1) this.i = this.TotalPages;
         window.scrollTo(0, 0);
-        this.paginationLoader();
         this.PushState();
-        this.getData(this.BaseURL,this.URI,this.i);
     };
 
-    // Loading animation functions upon page load to hide the API text from popping in after page loads
+    // Loading animation functions upon first page load to hide the API text from popping in after page loads
     loadingFade = () => {
         const loadingBg = document.querySelector('.loading__bg');
         const loadingImg = document.querySelector('.loading__img');
@@ -144,6 +132,14 @@ class ContentReaderFromURL {
         document.documentElement.scrollTop = 0;
     };
 
+    debounce = (callback, wait) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { callback.apply(this, args); }, wait);
+        };
+    }
+
     // Starts all required functions to fetch info
     setup = () => {
         this.getData();
@@ -168,27 +164,30 @@ class ContentReaderFromURL {
                     this.prevPage()
                     break;
             }
-        }, 800))
+        }, 300))
+
+        window.addEventListener('hashchange', (e) => {
+            let page = parseInt(window.location.hash.replace('#', ''));
+            if(isNaN(page)) page = 1;
+            if(page > this.TotalPages || page <= 0) {
+                this.i = 1;
+                window.location.hash = 1;
+            } else {
+                this.i = page;
+                this.getData();
+            }
+        })
 
         this.NextBtn.onclick = this.debounce(() => {
             this.nextPage();
-        }, 800);
+        }, 300);
         this.PrevBtn.onclick = this.debounce(() => {
             this.prevPage();
-        }, 800);
+        }, 300);
 
     };
-
-    debounce = (callback, wait) => {
-        let timeout;
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => { callback.apply(this, args); }, wait);
-        };
-    }
 }
 
 const render = new ContentReaderFromURL()
 render.setup();
-render.PopState();
 
